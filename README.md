@@ -1,8 +1,51 @@
 # Luhn algorithm
-Implementation of Luhn algorithm for any base in the range 2 - 36.
+Implementation of Luhn Mod N algorithm for *any base (modulus)* in the range 2 - 36.
 
-## Notes for base 10 (most common)
-The Luhn algorithm will detect all single-digit errors, as well as almost all transpositions of adjacent digits. It will not, however, detect transposition of the two-digit sequence 09 to 90 (or vice versa). It will detect most of the possible twin errors (it will not detect 22 ↔ 55, 33 ↔ 66 or 44 ↔ 77). 
+## Pros and cons
+The Luhn algorithm will detect all single-digit errors, as well as almost all transpositions of adjacent digits. It will not, however, detect transposition of the two-digit sequence _base-1_-0 to 0-_base-1_ (or vice versa), e.g. swapping 09 with 90 in Mod 10. 
+It will detect most of the possible twin errors, but not all of them (e.g. in Mod 10 it will not detect 22 ↔ 55, 33 ↔ 66 or 44 ↔ 77). 
+
+## Install and import
+Install with:
+```
+go get -u github.com/decadenza/luhn
+```
+Import as:
+```
+import "github.com/decadenza/luhn"
+```
+
+## Usage
+```
+
+base := 16
+myPayload := "14FAD"
+
+luhn, err := New(base)
+if err != nil {
+    panic(err)
+}
+
+// Generate and concatenate checksum.
+checksum, err := luhn.GetChecksum(myPayload)
+if err != nil {
+    t.Fatal(err)
+}
+fullCode := myPayload + checksum
+
+// Check its validity.
+valid := luhn.IsValid(fullCode)
+fmt.Printf("%s is valid? %t\n", fullCode, valid)
+
+// A mistyping will not be valid.
+wrongCode := "1AFAD" + checksum
+valid = luhn.IsValid(wrongCode)
+fmt.Printf("%s is valid? %t\n", wrongCode, valid)
+
+```
+
+Refer to test files for further examples.
+
 
 ## References
 - [](https://en.wikipedia.org/wiki/Luhn_algorithm)
