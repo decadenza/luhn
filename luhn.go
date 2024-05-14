@@ -1,9 +1,7 @@
 package luhn
 
 import (
-	"fmt"
 	"strconv"
-	"strings"
 )
 
 type checksumManager struct {
@@ -11,7 +9,7 @@ type checksumManager struct {
 }
 
 // Create a new checksum manager to create and validate coded strings.
-func NewChecksumManager(base int) (checksumManager, error) {
+func New(base int) (checksumManager, error) {
 
 	err := isAllowed(base)
 	if err != nil {
@@ -25,18 +23,14 @@ func NewChecksumManager(base int) (checksumManager, error) {
 // The checksum must be the last character.
 func (m checksumManager) IsValid(code string) bool {
 
+	// Separate original checksum and payload.
 	originalChecksum := string(code[len(code)-1])
-	payload := code[:len(code)-1]
+	code = code[:len(code)-1]
 
-	fmt.Println(code, "code")
-	fmt.Println(payload, "payload")
-
-	c, err := m.GetChecksum(payload) // Return uppercase checksum.
+	c, err := m.GetChecksum(code)
 	if err != nil {
 		return false
 	}
-
-	fmt.Println("original", originalChecksum, "new", c)
 
 	return c == originalChecksum
 }
@@ -46,40 +40,42 @@ func (m checksumManager) IsValid(code string) bool {
 func (m checksumManager) GetChecksum(input string) (string, error) {
 
 	var sum uint64
-	inputLower := strings.ToLower(input)
 
 	if len(input) < 1 {
 		// Empty string have no checksum.
 		return "", ErrInvalidValue
 	}
 
-	fmt.Println("input length", len(input))
+	base := uint64(m.Base)
 
-	for i := uint64(len(input) - 1); i > 0; i-- {
-
-		fmt.Println("index", i)
-
+	for i := int(0); i < len(input); i++ {
 		// From the rightmost digit.
+		// ParseUint will accept both lowercase and uppercase characters.
 		// All characters are lowercase as used in strconv package.
-		v, err := strconv.ParseUint(string(inputLower[i]), m.Base, strconv.IntSize)
+		v, err := strconv.ParseUint(string(input[i]), m.Base, strconv.IntSize)
 		if err != nil {
 			return "", err
 		}
 
 		// Double the value of every second digit from the left.
 		// For i = 1,3,5,etc.
-		v *= (1 + i%2)
+		v *= (1 + uint64(i)%2)
+
+		// Add digits together when above base.
+		// NOTE: Since we double each digit, the maximum possible value of v is 2*(base-1).
+		if v >= base {
+			v = 1 + v%base
+		}
 
 		sum += v
 
 	}
 
-	base := uint64(m.Base)
-	sum = base - (sum % base) // The smallest number (possibly zero) that must be added to sum to make it a multiple of the base.
+	sum = (base - (sum % base)) % base // The smallest number (possibly zero) that must be added to sum to make it a multiple of the base.
 
 	// FormatUint returns lowercase a-z characters. Enforcing uppercase (as more commonly used for codes).
 	// TODO: Add an option in constructor.
-	return strings.ToUpper(strconv.FormatUint(sum, m.Base)), nil
+	return strconv.FormatUint(sum, m.Base), nil
 }
 
 // Internal helper to validate possible bases.
