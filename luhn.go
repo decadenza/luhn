@@ -1,4 +1,4 @@
-// Package luhn implements a simple manager for Luhn checksum calculation and validation.
+// Package luhn implements a simple manager for Luhn Mod N checksum calculation and validation.
 package luhn
 
 import (
@@ -7,7 +7,7 @@ import (
 
 // Carries the chosen configuration and exposes the API.
 type Manager struct {
-	Base int
+	base int // Base (or Modulus) chosen. Common bases are 10, 16 and 36.
 }
 
 // Create a new checksum manager to create and validate coded strings.
@@ -20,7 +20,7 @@ func New(base int) (Manager, error) {
 		return Manager{}, err
 	}
 
-	return Manager{Base: base}, nil
+	return Manager{base: base}, nil
 }
 
 // Check that a code string is valid.
@@ -50,13 +50,13 @@ func (m Manager) GetChecksum(input string) (string, error) {
 		return "", ErrInvalidValue
 	}
 
-	base := uint64(m.Base)
+	base := uint64(m.base)
 
 	for i := int(0); i < len(input); i++ {
 		// From the rightmost digit.
 		// ParseUint will accept both lowercase and uppercase characters.
 		// All characters are lowercase as used in strconv package.
-		v, err := strconv.ParseUint(string(input[i]), m.Base, strconv.IntSize)
+		v, err := strconv.ParseUint(string(input[i]), m.base, strconv.IntSize)
 		if err != nil {
 			return "", err
 		}
@@ -77,7 +77,7 @@ func (m Manager) GetChecksum(input string) (string, error) {
 
 	// FormatUint returns lowercase a-z characters. Enforcing uppercase (as more commonly used for codes).
 	// TODO: Add an option in constructor.
-	return strconv.FormatUint(sum, m.Base), nil
+	return strconv.FormatUint(sum, m.base), nil
 }
 
 // Internal helper to validate possible bases.
