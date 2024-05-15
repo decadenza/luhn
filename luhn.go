@@ -65,11 +65,9 @@ func (m Manager) GetChecksum(input string) (string, error) {
 		// For i = 1,3,5,etc.
 		v *= (1 + uint64(i)%2)
 
-		// Add digits together when above base.
-		// NOTE: Since we double each digit, the maximum possible value of v is 2*(base-1).
-		if v >= base {
-			v = 1 + v%base
-		}
+		// Add digits together when above base. Only relevant when v >= base.
+		// NOTE: Since we double each digit, the maximum possible value of v at this point is 2*(base-1).
+		v = v/base + v%base
 
 		sum += v
 
