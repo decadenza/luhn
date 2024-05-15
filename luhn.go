@@ -1,27 +1,31 @@
+// Package luhn implements a simple manager for Luhn checksum calculation and validation.
 package luhn
 
 import (
 	"strconv"
 )
 
-type checksumManager struct {
+// Carries the chosen configuration and exposes the API.
+type Manager struct {
 	Base int
 }
 
 // Create a new checksum manager to create and validate coded strings.
-func New(base int) (checksumManager, error) {
+// The base must be in the allowed range.
+// It returns an instance that can be used to perform checksum calculation and validation.
+func New(base int) (Manager, error) {
 
 	err := isAllowed(base)
 	if err != nil {
-		return checksumManager{}, err
+		return Manager{}, err
 	}
 
-	return checksumManager{Base: base}, nil
+	return Manager{Base: base}, nil
 }
 
 // Check that a code string is valid.
 // The checksum must be the last character.
-func (m checksumManager) IsValid(code string) bool {
+func (m Manager) IsValid(code string) bool {
 
 	// Separate original checksum and payload.
 	originalChecksum := string(code[len(code)-1])
@@ -36,8 +40,8 @@ func (m checksumManager) IsValid(code string) bool {
 }
 
 // Generate the checksum for a given input string.
-// The input must be *without* without checksum appended.
-func (m checksumManager) GetChecksum(input string) (string, error) {
+// The input must *not* have a checksum suffix.
+func (m Manager) GetChecksum(input string) (string, error) {
 
 	var sum uint64
 

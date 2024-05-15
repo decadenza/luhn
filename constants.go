@@ -1,17 +1,11 @@
-// Custom error definitions.
-
 package luhn
 
 import "errors"
 
-// SECTION Configuration values.
-
-// !SECTION
-
-// SECTION Custom errors.
-var ErrUnexpected = errors.New("unexpected")
-var ErrInvalidBase = errors.New("invalid base")
-var ErrInvalidValue = errors.New("invalid value")
-var ErrInvalidChecksum = errors.New("invalid checksum")
-
-// !SECTION
+// Custom errors.
+var (
+	ErrUnexpected      = errors.New("unexpected")
+	ErrInvalidBase     = errors.New("invalid base")
+	ErrInvalidValue    = errors.New("invalid value")
+	ErrInvalidChecksum = errors.New("invalid checksum")
+)
