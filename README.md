@@ -1,5 +1,9 @@
 # Luhn algorithm
-Implementation of Luhn Mod N algorithm for *any base (modulus)* divisible by 2 and in the range 2 - 36.
+Implementation of Luhn Mod N algorithm for *any base (modulus)* divisible by 2 in the range from 2 to 36.
+Most used configurations are:
+- Luhn Mod 10
+- Luhn Mod 16 (hexadecimal)
+- Luhn Mod 36 (all 0-9 and A-Z characters)
 
 ## Pros and cons
 The Luhn algorithm will detect all single-digit errors, as well as almost all transpositions of adjacent digits. It will not, however, detect transposition of the two-digit sequence _base-1_-0 to 0-_base-1_ (or vice versa), e.g. swapping 09 with 90 in Mod 10. 
