@@ -7,11 +7,11 @@ Most used configurations are:
 
 ## Character mapping
 The character mapping is based on the standard [strconv](https://pkg.go.dev/strconv) package.
-Letter `a` is mapped to 10 and all other letters are mapped subsequentially, up to letter `z` which is mapped to 36.
+Letter `A` is mapped to 10 and all other letters are mapped subsequentially, up to letter `Z` which is mapped to 36.
 The expected input is a string where each character is treated independently.
 
 ## Pros and cons
-The Luhn algorithm will detect all single-digit errors, as well as almost all transpositions of adjacent digits. It will not, however, detect transposition of the two-digit sequence _base-1_-0 to 0-_base-1_ (or vice versa), e.g. swapping 09 with 90 in Mod 10. 
+The Luhn algorithm will detect all single-digit errors, as well as almost all transpositions of adjacent digits. It will not, however, detect transposition of the two-digit sequence _(base-1)_-0 to 0-_(base-1)_ (or vice versa), e.g. swapping 09 with 90 in Mod 10. 
 It will detect most of the possible twin errors, but not all of them (e.g. in Mod 10 it will not detect 22 ↔ 55, 33 ↔ 66 or 44 ↔ 77). 
 
 ## Install and import
